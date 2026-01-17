@@ -1,4 +1,4 @@
-#Calculator app
+# Calculator app
 
 A simple calculator app using HTML,JavaScript & CSS
 
