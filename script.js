@@ -1,55 +1,154 @@
-const display = document.getElementById('display');
-let calculated = false;
+const display = document.querySelector('input[name="display"]');
+const buttons = document.querySelectorAll('.button');
 
+let justCalculated = false;
 
-function calculate(value){
-    if(display.value === "Error"){
-        if(isOperator(value)){
-            display.value=value;
-        }
-        else{
-            display.value=value;
-        }
-        calculated=false;
-        return;
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => handleInput(btn.value));
+});
+
+function handleInput(value) {
+  if (value === "C") {
+    clearAll();
+    return;
+  }
+
+  if (value === "X") {
+    deleteOne();
+    return;
+  }
+
+  if (value === "=") {
+    calculate();
+    return;
+  }
+
+  if (value === "%") {
+    addPercent();
+    return;
+  }
+
+  if (justCalculated && isNumber(value)) {
+    display.value = value;
+    justCalculated = false;
+    return;
+  }
+
+  if (isOperator(value)) {
+    addOperator(value);
+    return;
+  }
+
+  if (value === ".") {
+    addDot();
+    return;
+  }
+
+  addNumber(value);
+}
+
+/* ---------- core ---------- */
+
+function clearAll() {
+  display.value = "";
+}
+
+function deleteOne() {
+  display.value = display.value.slice(0, -1);
+}
+
+/* ---------- percent display ---------- */
+
+function addPercent() {
+  if (!display.value) return;
+
+  const lastChar = display.value.slice(-1);
+  if (isOperator(lastChar) || lastChar === "%") return;
+
+  display.value += "%";
+  justCalculated = false;
+}
+
+/* ---------- calculation ---------- */
+
+function calculate() {
+  if (!display.value) return;
+
+  try {
+    let exp = display.value;
+
+    // Handle percent expressions
+    exp = resolvePercents(exp);
+
+    exp = exp.replace(/×/g, "*").replace(/÷/g, "/");
+
+    display.value = eval(exp);
+    justCalculated = true;
+  } catch {
+    display.value = "Error";
+  }
+}
+
+/* ---------- percent resolver ---------- */
+
+function resolvePercents(exp) {
+  // Case: number%
+  exp = exp.replace(/(\d+\.?\d*)%/g, (_, num) => {
+    return `(${num}/100)`;
+  });
+
+  // Case: A + B%, A - B%, A × B%, A ÷ B%
+  exp = exp.replace(
+    /(\d+\.?\d*)([+\-×÷])\((\d+\.?\d*)\/100\)/g,
+    (_, base, op, percent) => {
+      switch (op) {
+        case "+":
+          return base + "+" + "(" + base + "*" + percent + ")";
+        case "-":
+          return base + "-" + "(" + base + "*" + percent + ")";
+        case "×":
+          return base + "*" + percent;
+        case "÷":
+          return base + "/" + percent;
+      }
     }
-    if (calculated && !isOperator(value)){
-        display.value = value;
-        calculated=false;
-    }
-    else{
-        display.value+=value;
-        calculated = false;
-    }
+  );
+
+  return exp;
 }
 
-function result(){
-    try{
-        let expression = display.value.replace(/×/g,'*').replace(/÷/,'/');
-        expression = percent(expression);
-        display.value = eval(expression);
-    }catch{
-        display.value="Error";
-    }
-    calculated=true;
+/* ---------- input helpers ---------- */
+
+function addNumber(num) {
+  display.value += num;
 }
 
-function clearDisplay(){
-    display.value="";
-    calculated=false;
+function addOperator(op) {
+  if (!display.value) return;
+
+  const lastChar = display.value.slice(-1);
+  if (isOperator(lastChar)) {
+    display.value = display.value.slice(0, -1) + op;
+  } else {
+    display.value += op;
+  }
+
+  justCalculated = false;
 }
 
-function Delete(){
-    display.value= display.value.slice(0,-1);
+function addDot() {
+  const parts = display.value.split(/[+\-×÷]/);
+  const lastPart = parts[parts.length - 1];
+
+  if (!lastPart.includes(".")) {
+    display.value += ".";
+  }
 }
 
-function isOperator(val){
-    return['+','-','÷','×','%'].includes(val)
+function isOperator(val) {
+  return ["+", "-", "×", "÷"].includes(val);
 }
 
-function percent(exp){
-    exp = exp.replace(/(\d+(\.\d+)?)%/g, '($1/100)');
-    exp = exp.replace(/(\d+(\.\d+)?)([+\-])(\d+(\.\d+)?)\/100/g,'($1$3($1*$4/100))');
-    return exp;
-
+function isNumber(val) {
+  return !isNaN(val);
 }

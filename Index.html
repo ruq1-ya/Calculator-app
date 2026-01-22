@@ -7,34 +7,37 @@
     <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-    <div class="cal">
-        <input type="text" id="display" placeholder="0" readonly>
+    <div class="calculator">
+        <div id="screen">
+            <input type="text" name="display" placeholder="0" readonly>
+        </div>
+        <div id="buttons">
+            <input type="button" value="C" class="button">
+            <input type="button" value="X" class="button">
+            <input type="button" value="÷" class="button">
+            <input type="button" value="×" class="button">
 
-        <button onclick="clearDisplay()" class="operator">C</button>
-        <button onclick="Delete()" class="operator">DEL</button>
-        <button onclick="calculate('÷')" class="operator">÷</button>
-        <button onclick="calculate('×')" class="operator">×</button>
+            <input type="button" value="7" class="button">
+            <input type="button" value="8" class="button">
+            <input type="button" value="9" class="button">
+            <input type="button" value="-" class="button">
 
-        <button onclick="calculate('7')">7</button>
-        <button onclick="calculate('8')">8</button>
-        <button onclick="calculate('9')">9</button>
-        <button onclick="calculate('-')" class="operator">-</button>
+            <input type="button" value="4" class="button">
+            <input type="button" value="5" class="button">
+            <input type="button" value="6" class="button">
+            <input type="button" value="+" class="button">
 
-        <button onclick="calculate('4')">4</button>
-        <button onclick="calculate('5')">5</button>
-        <button onclick="calculate('6')">6</button>
-        <button onclick="calculate('+')" class="operator">+</button>
+            <input type="button" value="1" class="button">
+            <input type="button" value="2" class="button">
+            <input type="button" value="3" class="button">
+            <input type="button" value="=" class="button" id="equal">
 
-        <button onclick="calculate('1')">1</button>
-        <button onclick="calculate('2')">2</button>
-        <button onclick="calculate('3')">3</button>
-        <button onclick="result()" class="equal">=</button>
-        
-        <button onclick="calculate('%')" class="operator">%</button>
-        <button onclick="calculate('0')">0</button>
-        <button onclick="calculate('.')" class="operator">.</button>
-
+            <input type="button" value="%" class="button">
+            <input type="button" value="0" class="button">
+            <input type="button" value="." class="button">
+        </div>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
